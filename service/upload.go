@@ -1,12 +1,15 @@
 package service
 
 import (
-	 _"fmt"
+	_ "fmt"
 	"io"
 	"learn_ginmall/conf"
 	"mime/multipart"
 	"os"
 	"strconv"
+
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	"github.com/qiniu/go-sdk/v7/storage"
 )
 
 func UploadAvatarToLocalStatic(file multipart.File, userId uint, userName string) (filePath string, err error) {
@@ -60,4 +63,15 @@ func UploadProductToLocalStatic(file multipart.File, userId uint, productName st
 		return
 	}
 	return "boss" + bId + "/" + productName + ".jpg", nil
+}
+
+func UploadToQiNiu(file multipart.File, filesize int64) (path string, err error) {
+	var AccessKey = conf.AccessKey
+	var SerectKey = conf.SerectKey
+	var Bucket = conf.Bucket
+	var ImgUrl = conf.QiniuServer
+	putPlicy := storage.PutPolicy{
+		Scope: Bucket,
+	}
+	mac := qbox.NewMac(AccessKey, )
 }

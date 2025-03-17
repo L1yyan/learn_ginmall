@@ -12,6 +12,7 @@ import (
 var (
 	AppModel string
 	HttpPort string
+	UploadModel string
 
 	DB          string
 	DbPort      string
@@ -24,6 +25,11 @@ var (
 	RedisPw     string
 	RedisDbName string
 
+	AccessKey	string
+	SerectKey	string
+	Bucket		string
+	QiniuServer	string
+
 	ValidEmail string
 	SmtpHost   string
 	SmtpEmail  string
@@ -32,6 +38,8 @@ var (
 	Host        string
 	ProductPath string
 	AvatarPath  string
+
+
 )
 
 func Init() {
@@ -45,7 +53,8 @@ func Init() {
 	LoadRedis(file)
 	LoadEmail(file)
 	LoadPhotoPath(file)
-
+	LoadQiniu(file)
+	LoadRedis(file)
 	//mysql Read (8) 主
 
 	PathRead := strings.Join([]string{DbUser, ":", DbPassword, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8mb4&parseTime=true"}, "")
@@ -58,8 +67,6 @@ func Init() {
 func LoadServer(file *ini.File) {
 	AppModel = file.Section("service").Key("AppMode").String()
 	HttpPort = file.Section("service").Key("HttpPort").String()
-	_ = AppModel
-	_ = HttpPort
 }
 
 func LoadMySql(file *ini.File) {
@@ -81,26 +88,23 @@ func LoadRedis(file *ini.File) {
 	RedisAddr = file.Section("redis").Key("RedisAddr").String()
 	RedisPw = file.Section("redis").Key("RedisPw").String()
 	RedisDbName = file.Section("redis").Key("RedisDbName").String()
-	_ = RedisDb
-	_ = RedisAddr
-	_ = RedisPw
-	_ = RedisDbName
+}
+func LoadQiniu(file *ini.File) {
+	AccessKey = file.Section("qiniu").Key("AccessKey").String()
+	SerectKey = file.Section("qiniu").Key("SerectKey").String()
+	Bucket = file.Section("qiniu").Key("Bucket").String()
+	QiniuServer = file.Section("qiniu").Key("QiniuServer").String()
 }
 func LoadEmail(file *ini.File) {
 	ValidEmail = file.Section("email").Key("ValidEmail").String()
 	SmtpHost = file.Section("email").Key("SmtpHost").String()
 	SmtpEmail = file.Section("email").Key("SmtpEmail").String()
 	SmtpPass = file.Section("email").Key("SmtpPass").String()
-	_ = ValidEmail
-	_ = SmtpHost
-	_ = SmtpEmail
-	_ = SmtpPass
+
 }
 func LoadPhotoPath(file *ini.File) {
 	Host = file.Section("path").Key("Host").String()
 	ProductPath = file.Section("path").Key("ProductPath").String()
 	AvatarPath = file.Section("path").Key("AvatarPath").String()
-	_ = Host
-	_ = ProductPath
-	_ = AvatarPath
+
 }

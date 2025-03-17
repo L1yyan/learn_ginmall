@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"learn_ginmall/conf"
 	"learn_ginmall/dao"
 	"learn_ginmall/model"
 	"learn_ginmall/pkg/e"
@@ -33,9 +34,15 @@ func (service *ProductService) Create(ctx context.Context, uId uint, files []*mu
 	userDao := dao.NewUserDao(ctx)
 	boss, _ = userDao.GetUserById(uId)
 	//以第一张作为封面图 这里写的是上传到本地
-	//TODO:上传到七牛云 v2.0里
+	//TODO:上传到七牛云 
 	tmp, _ := files[0].Open()
-	path, err := UploadProductToLocalStatic(tmp, uId, service.Name)
+	var path string
+	if conf.UploadModel == "local" {
+		path, err = UploadProductToLocalStatic(tmp, uId, service.Name)
+	} else {
+		path, err = util.UploadToQiNiu(tmp, file[0].Size)
+	}
+	
 	if err != nil {
 		code = e.ErrorProductImgUpload
 		util.Logrusobj.Infoln("service create uploadProductTolocalStatic ",err)
@@ -48,7 +55,7 @@ func (service *ProductService) Create(ctx context.Context, uId uint, files []*mu
 	product := &model.Product{
 			Name:	service.Name,
 			Category:	service.CategoryId,
-			Ttile:	service.Title,
+			Title:	service.Title,
 			Info:	service.Info,
 			ImgPath:	path,
 			Price:	service.Price,
