@@ -3,7 +3,6 @@ package v1
 import (
 	"learn_ginmall/pkg/util"
 	"learn_ginmall/service"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

@@ -40,7 +40,7 @@ func (service *ProductService) Create(ctx context.Context, uId uint, files []*mu
 	if conf.UploadModel == "local" {
 		path, err = UploadProductToLocalStatic(tmp, uId, service.Name)
 	} else {
-		path, err = util.UploadToQiNiu(tmp, file[0].Size)
+		path, err = UploadToQiNiu(tmp, files[0].Size)
 	}
 	
 	if err != nil {

@@ -123,7 +123,7 @@ func (service *OrderService) Show(ctx context.Context, uId string) serializer.Re
 	order, _ := orderDao.GetOrderById(uint(orderId))
 
 	addressDao := dao.NewAddressDao(ctx)
-	address, err := addressDao.GetAddressByAid(order.AddressID)
+	address, err := addressDao.GetAddressByAid(order.AddressId)
 	if err != nil {
 		logging.Info(err)
 		code = e.ErrorDatabase
@@ -134,7 +134,7 @@ func (service *OrderService) Show(ctx context.Context, uId string) serializer.Re
 	}
 
 	productDao := dao.NewProductDao(ctx)
-	product, err := productDao.GetProductById(order.ProductID)
+	product, err := productDao.GetProductById(order.ProductId)
 	if err != nil {
 		logging.Info(err)
 		code = e.ErrorDatabase

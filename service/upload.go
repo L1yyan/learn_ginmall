@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	_ "fmt"
 	"io"
 	"learn_ginmall/conf"
@@ -73,5 +74,20 @@ func UploadToQiNiu(file multipart.File, filesize int64) (path string, err error)
 	putPlicy := storage.PutPolicy{
 		Scope: Bucket,
 	}
-	mac := qbox.NewMac(AccessKey, )
+	mac := qbox.NewMac(AccessKey, SerectKey)
+	upToken := putPlicy.UploadToken(mac)
+	cfg := storage.Config {
+		Zone: &storage.ZoneHuabei,
+		UseCdnDomains: false,
+		UseHTTPS: false,
+	}
+	putExtra := storage.PutExtra{}
+	formUploader := storage.NewFormUploader(&cfg)
+	ret := storage.PutRet{}
+	err = formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, filesize, &putExtra)
+	if err != nil{
+		return "", err
+	}
+	url := ImgUrl + ret.Key
+	return url, nil
 }

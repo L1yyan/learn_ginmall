@@ -14,6 +14,8 @@ var MsgFlags = map[int]string{
 	ErrorSendEmail: "邮件发送失败",
 	ErrorProductImgUpload: "图片上传错误",
 	ErrorDatabase: "数据库错误",
+	ErrorProductMoreCart: "超过最大上限",
+	ErrorProductExistCart: "商品已经在购物车了，数量+1",
 }
 
 //getmsg 获取状态码对应信息

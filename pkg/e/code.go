@@ -16,4 +16,7 @@ const (
 	//product 模块 4xxxx
 	ErrorProductImgUpload = 40001
 	ErrorDatabase = 40002
+
+	ErrorProductMoreCart = 20008
+	ErrorProductExistCart = 20009
 )
