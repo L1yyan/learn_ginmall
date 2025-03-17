@@ -13,6 +13,7 @@ var MsgFlags = map[int]string{
 	ErrorUploadFail: "图片上传失败",
 	ErrorSendEmail: "邮件发送失败",
 	ErrorProductImgUpload: "图片上传错误",
+	ErrorDatabase: "数据库错误",
 }
 
 //getmsg 获取状态码对应信息

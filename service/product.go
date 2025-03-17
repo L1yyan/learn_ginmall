@@ -110,3 +110,51 @@ func (service *ProductService) Create(ctx context.Context, uId uint, files []*mu
 		Msg: e.GetMsg(code),
 	}
 }
+
+func (service *ProductService) Delete(ctx context.Context, pId string) serializer.Response {
+	code := e.Success
+	productDao := dao.NewProductDao(ctx)
+	productId, _ := strconv.Atoi(pId)
+	err := productDao.DeleteProduct(uint(productId))
+	if err != nil {
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+	return serializer.Response{
+		Status: code,
+		Msg:    e.GetMsg(code),
+	}
+}
+
+func (service *ProductService) Update(ctx context.Context, pId string) serializer.Response {
+	code := e.Success
+	ProductDao := dao.NewProductDao(ctx)
+	productId, _ := strconv.Atoi(pId)
+	product :=&model.Product{
+		Name:       service.Name,
+		Category: uint(service.CategoryId),
+		Title:      service.Title,
+		Info:       service.Info,
+		ImgPath:       service.ImgPath,
+		Price:         service.Price,
+		DiscountPrice: service.DiscountPrice,
+		OnSale:        service.OnSale,
+	}
+	err := ProductDao.UpdateProduct(uint(productId), product)
+	if err != nil {
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+	return serializer.Response{
+		Status: code,
+		Msg: e.GetMsg(code),
+	}
+}

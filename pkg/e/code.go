@@ -15,4 +15,5 @@ const (
 	ErrorSendEmail = 30008
 	//product 模块 4xxxx
 	ErrorProductImgUpload = 40001
+	ErrorDatabase = 40002
 )

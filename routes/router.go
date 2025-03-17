@@ -37,6 +37,8 @@ func NewRouter() *gin.Engine {
 			
 			//商品操作
 			authed.POST("product", api.CreateProduct)
+			authed.PUT("product/:id", api.UpdateProduct)
+			authed.DELETE("product/:id", api.DeleteProduct)
 			
 		}
 
