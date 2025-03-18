@@ -39,6 +39,9 @@ var (
 	ProductPath string
 	AvatarPath  string
 
+	EsHost		string
+	EsPort		string
+	EsIndex		string
 
 )
 
@@ -55,6 +58,7 @@ func Init() {
 	LoadPhotoPath(file)
 	LoadQiniu(file)
 	LoadRedis(file)
+	LoadEs(file)
 	//mysql Read (8) 主
 
 	PathRead := strings.Join([]string{DbUser, ":", DbPassword, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8mb4&parseTime=true"}, "")
@@ -107,4 +111,10 @@ func LoadPhotoPath(file *ini.File) {
 	ProductPath = file.Section("path").Key("ProductPath").String()
 	AvatarPath = file.Section("path").Key("AvatarPath").String()
 
+}
+
+func LoadEs(file *ini.File) {
+	EsHost = file.Section("es").Key("EsHost").String()
+	EsPort = file.Section("es").Key("EsPort").String()
+	EsIndex = file.Section("es").Key("EsIndex").String()
 }
