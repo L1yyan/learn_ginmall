@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	AppModel string
-	HttpPort string
+	AppModel    string
+	HttpPort    string
 	UploadModel string
 
 	DB          string
@@ -26,10 +26,10 @@ var (
 	RedisPw     string
 	RedisDbName string
 
-	AccessKey	string
-	SerectKey	string
-	Bucket		string
-	QiniuServer	string
+	AccessKey   string
+	SerectKey   string
+	Bucket      string
+	QiniuServer string
 
 	ValidEmail string
 	SmtpHost   string
@@ -40,10 +40,9 @@ var (
 	ProductPath string
 	AvatarPath  string
 
-	EsHost		string
-	EsPort		string
-	EsIndex		string
-
+	EsHost  string
+	EsPort  string
+	EsIndex string
 )
 
 func Init() {
@@ -59,22 +58,23 @@ func Init() {
 	LoadPhotoPath(file)
 	LoadQiniu(file)
 	LoadRedis(file)
-	LoadEs(file)
+	// LoadEs(file)
 	//mysql Read (8) 主
 
 	PathRead := strings.Join([]string{DbUser, ":", DbPassword, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8mb4&parseTime=true"}, "")
 	//mysql Write (2) 从 主从复制
 	PathWrite := strings.Join([]string{DbUser, ":", DbPassword, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8mb4&parseTime=true"}, "")
-	
+
 	dao.Database(PathRead, PathWrite)
 	cache.Init()
-	InitEs()
-	
+	// InitEs()
+
 }
 
 func LoadServer(file *ini.File) {
 	AppModel = file.Section("service").Key("AppMode").String()
 	HttpPort = file.Section("service").Key("HttpPort").String()
+	UploadModel = file.Section("service").Key("UploadModel").String()
 }
 
 func LoadMySql(file *ini.File) {

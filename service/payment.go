@@ -34,7 +34,7 @@ func (service *OrderPay) PayDown(ctx context.Context, uId uint) serializer.Respo
 	code := e.Success
 
 	err := dao.NewOrderDao(ctx).Transaction(func(tx *gorm.DB) error {
-
+		fmt.Println(service.Key + "::test")
 		util.Encrypt.SetKey(service.Key)
 		orderDao := dao.NewOrderDaoByDB(tx)
 
@@ -46,12 +46,17 @@ func (service *OrderPay) PayDown(ctx context.Context, uId uint) serializer.Respo
 		//先对该订单是否超时进行判断 从redis取出，如果超时则回滚，否则继续
 		score, err := cache.RedisClient.ZScore(OrderTimeKey, strconv.FormatUint(order.OrderNum, 10)).Result()
 		currentime := time.Now().Unix()
-		if currentime > int64(score) {
+		if currentime < int64(score) {
+			fmt.Println(currentime, "  ", int64(score))
 			//订单超时了 后续操作取消
 			code = e.ErrorRedis
 			return errors.New("订单已超时")
 		}
-
+		if err != nil {
+			logging.Info(err)
+			code = e.ErrorRedis
+			return err
+		}
 		money := order.Money
 		num := order.Num
 		money = money * float64(num)

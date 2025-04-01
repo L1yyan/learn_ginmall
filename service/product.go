@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"learn_ginmall/conf"
 	"learn_ginmall/dao"
 	"learn_ginmall/model"
@@ -34,47 +35,49 @@ func (service *ProductService) Create(ctx context.Context, uId uint, files []*mu
 	userDao := dao.NewUserDao(ctx)
 	boss, _ = userDao.GetUserById(uId)
 	//以第一张作为封面图 这里写的是上传到本地
-	//TODO:上传到七牛云 
+	//TODO:上传到七牛云
 	tmp, _ := files[0].Open()
 	var path string
 	if conf.UploadModel == "local" {
+		fmt.Println("asd")
 		path, err = UploadProductToLocalStatic(tmp, uId, service.Name)
 	} else {
+		fmt.Println("asdaaaa")
 		path, err = UploadToQiNiu(tmp, files[0].Size)
 	}
-	
+
 	if err != nil {
 		code = e.ErrorProductImgUpload
-		util.Logrusobj.Infoln("service create uploadProductTolocalStatic ",err)
+		util.Logrusobj.Infoln("service create uploadProductTolocalStatic ", err)
 		return serializer.Response{
 			Status: code,
-			Data: e.GetMsg(code),
-			Error: err.Error(),
+			Data:   e.GetMsg(code),
+			Error:  err.Error(),
 		}
 	}
 	product := &model.Product{
-			Name:	service.Name,
-			Category:	service.CategoryId,
-			Title:	service.Title,
-			Info:	service.Info,
-			ImgPath:	path,
-			Price:	service.Price,
-			DiscountPrice:	service.Price,
-			OnSale:	true,
-			Num:	service.Num,
-			BossId: uId,
-			BossName: boss.UserName,
-			BossAvatar: boss.Avatar,
+		Name:          service.Name,
+		Category:      service.CategoryId,
+		Title:         service.Title,
+		Info:          service.Info,
+		ImgPath:       path,
+		Price:         service.Price,
+		DiscountPrice: service.Price,
+		OnSale:        true,
+		Num:           service.Num,
+		BossId:        uId,
+		BossName:      boss.UserName,
+		BossAvatar:    boss.Avatar,
 	}
 	productDao := dao.NewProductDao(ctx)
 	err = productDao.CreateProduct(product)
 	if err != nil {
 		code = e.Error
-		util.Logrusobj.Infoln("service create CreateProduct ",err)
+		util.Logrusobj.Infoln("service create CreateProduct ", err)
 		return serializer.Response{
 			Status: code,
-			Data: e.GetMsg(code),
-			Error: err.Error(),
+			Data:   e.GetMsg(code),
+			Error:  err.Error(),
 		}
 	}
 	//并发创建
@@ -89,23 +92,23 @@ func (service *ProductService) Create(ctx context.Context, uId uint, files []*mu
 			code = e.ErrorProductImgUpload
 			return serializer.Response{
 				Status: code,
-				Data: nil,
-				Msg: e.GetMsg(code),
-				Error: err.Error(),
+				Data:   nil,
+				Msg:    e.GetMsg(code),
+				Error:  err.Error(),
 			}
 		}
-		productImg := model.ProductImg {
+		productImg := model.ProductImg{
 			ProductId: product.ID,
-			ImgPath: path,
+			ImgPath:   path,
 		}
 		err = productImgDao.CreateProductImg(&productImg)
 		if err != nil {
 			code = e.Error
 			return serializer.Response{
 				Status: code,
-				Data: nil,
-				Msg: e.GetMsg(code),
-				Error: err.Error(),
+				Data:   nil,
+				Msg:    e.GetMsg(code),
+				Error:  err.Error(),
 			}
 		}
 		wg.Done()
@@ -113,8 +116,8 @@ func (service *ProductService) Create(ctx context.Context, uId uint, files []*mu
 	wg.Wait()
 	return serializer.Response{
 		Status: code,
-		Data: serializer.BuildProduct(product),
-		Msg: e.GetMsg(code),
+		Data:   serializer.BuildProduct(product),
+		Msg:    e.GetMsg(code),
 	}
 }
 
@@ -141,11 +144,11 @@ func (service *ProductService) Update(ctx context.Context, pId string) serialize
 	code := e.Success
 	ProductDao := dao.NewProductDao(ctx)
 	productId, _ := strconv.Atoi(pId)
-	product :=&model.Product{
-		Name:       service.Name,
-		Category: uint(service.CategoryId),
-		Title:      service.Title,
-		Info:       service.Info,
+	product := &model.Product{
+		Name:          service.Name,
+		Category:      uint(service.CategoryId),
+		Title:         service.Title,
+		Info:          service.Info,
 		ImgPath:       service.ImgPath,
 		Price:         service.Price,
 		DiscountPrice: service.DiscountPrice,
@@ -162,6 +165,6 @@ func (service *ProductService) Update(ctx context.Context, pId string) serialize
 	}
 	return serializer.Response{
 		Status: code,
-		Msg: e.GetMsg(code),
+		Msg:    e.GetMsg(code),
 	}
 }
