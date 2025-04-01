@@ -17,6 +17,9 @@ const (
 	ErrorProductImgUpload = 40001
 	ErrorDatabase = 40002
 
+	//redis
+	ErrorRedis = 50001
+
 	ErrorProductMoreCart = 20008
 	ErrorProductExistCart = 20009
 )

@@ -16,6 +16,7 @@ var MsgFlags = map[int]string{
 	ErrorDatabase: "数据库错误",
 	ErrorProductMoreCart: "超过最大上限",
 	ErrorProductExistCart: "商品已经在购物车了，数量+1",
+	ErrorRedis: "Redis错误",
 }
 
 //getmsg 获取状态码对应信息

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"learn_ginmall/conf"
 	"log"
 	"os"
 	"path"
@@ -29,7 +30,7 @@ func init() {
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 	//TODO：ELK体系
-	hook := EsHookLog()
+	hook := conf.EsHookLog()
 	logger.AddHook(hook)
 	Logrusobj = logger
 	Logrusobj = logger

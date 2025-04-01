@@ -4,9 +4,10 @@ import (
 	_ "fmt"
 	"strings"
 
-	"gopkg.in/ini.v1"
-
+	"learn_ginmall/cache"
 	"learn_ginmall/dao"
+
+	"gopkg.in/ini.v1"
 )
 
 var (
@@ -66,6 +67,9 @@ func Init() {
 	PathWrite := strings.Join([]string{DbUser, ":", DbPassword, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8mb4&parseTime=true"}, "")
 	
 	dao.Database(PathRead, PathWrite)
+	cache.Init()
+	InitEs()
+	
 }
 
 func LoadServer(file *ini.File) {

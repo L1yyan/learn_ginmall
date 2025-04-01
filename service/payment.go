@@ -4,16 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"learn_ginmall/cache"
+	"learn_ginmall/dao"
+	"learn_ginmall/model"
+	"learn_ginmall/pkg/e"
+	"learn_ginmall/pkg/util"
+	"learn_ginmall/serializer"
 	"strconv"
+	"time"
 
 	logging "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-
-	"learn_ginmall/pkg/e"
-	"learn_ginmall/pkg/util"
-	"learn_ginmall/dao"
-	"learn_ginmall/model"
-	"learn_ginmall/serializer"
 )
 
 type OrderPay struct {
@@ -33,14 +34,24 @@ func (service *OrderPay) PayDown(ctx context.Context, uId uint) serializer.Respo
 	code := e.Success
 
 	err := dao.NewOrderDao(ctx).Transaction(func(tx *gorm.DB) error {
+
 		util.Encrypt.SetKey(service.Key)
 		orderDao := dao.NewOrderDaoByDB(tx)
-		
+
 		order, err := orderDao.GetOrderById(service.OrderId)
 		if err != nil {
 			logging.Info(err)
 			return err
 		}
+		//先对该订单是否超时进行判断 从redis取出，如果超时则回滚，否则继续
+		score, err := cache.RedisClient.ZScore(OrderTimeKey, strconv.FormatUint(order.OrderNum, 10)).Result()
+		currentime := time.Now().Unix()
+		if currentime > int64(score) {
+			//订单超时了 后续操作取消
+			code = e.ErrorRedis
+			return errors.New("订单已超时")
+		}
+
 		money := order.Money
 		num := order.Num
 		money = money * float64(num)
@@ -49,7 +60,7 @@ func (service *OrderPay) PayDown(ctx context.Context, uId uint) serializer.Respo
 		user, err := userDao.GetUserById(uId)
 		if err != nil {
 			logging.Info(err)
-			code = e.ErrorDatabase
+			code = e.ErrorRedis
 			return err
 		}
 
@@ -110,7 +121,7 @@ func (service *OrderPay) PayDown(ctx context.Context, uId uint) serializer.Respo
 
 		productUser := model.Product{
 			Name:          product.Name,
-			Category:    product.Category,
+			Category:      product.Category,
 			Title:         product.Title,
 			Info:          product.Info,
 			ImgPath:       product.ImgPath,

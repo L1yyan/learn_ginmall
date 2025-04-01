@@ -16,7 +16,7 @@ var (
 	RedisDbName string
 )
 
-func init() {
+func Init() {
 	file, err := ini.Load("../conf/config.ini")
 	if err != nil {
 		fmt.Println("redis config err: ", err)
